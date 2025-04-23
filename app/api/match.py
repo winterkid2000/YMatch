@@ -1,8 +1,9 @@
+# app/api/match.py
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from ..database import SessionLocal
 from .. import models, schemas
-from typing import List
+from typing import List, Dict
 
 router = APIRouter()
 
@@ -37,8 +38,12 @@ def get_received_proposals(nickname: str, db: Session = Depends(get_db)):
         models.MatchProposal.status != "canceled"
     ).all()
 
+@router.get("/match/sent/{nickname}", response_model=List[schemas.MatchProposalOut])
+def get_sent_proposals(nickname: str, db: Session = Depends(get_db)):
+    return db.query(models.MatchProposal).filter(models.MatchProposal.sender_nickname == nickname).all()
+
 @router.patch("/match/{proposal_id}")
-def accept_proposal(proposal_id: int, db: Session = Depends(get_db)):
+def accept_proposal(proposal_id: int, db: Session = Depends(get_db)) -> Dict[str, str]:
     proposal = db.query(models.MatchProposal).filter(models.MatchProposal.id == proposal_id).first()
     if not proposal:
         raise HTTPException(status_code=404, detail="Proposal not found")
@@ -50,14 +55,14 @@ def accept_proposal(proposal_id: int, db: Session = Depends(get_db)):
         ride.is_active = False
 
     db.commit()
-    return {"message": "Proposal accepted and ride request closed."}
+    return {"message": "제안이 수락되었습니다!"}
 
 @router.delete("/match/{proposal_id}")
-def cancel_proposal(proposal_id: int, db: Session = Depends(get_db)):
+def cancel_proposal(proposal_id: int, db: Session = Depends(get_db)) -> Dict[str, str]:
     proposal = db.query(models.MatchProposal).filter(models.MatchProposal.id == proposal_id).first()
     if not proposal:
         raise HTTPException(status_code=404, detail="Proposal not found")
 
     proposal.status = "canceled"
     db.commit()
-    return {"message": "Match proposal canceled."}
+    return {"message": "제안이 거절되었습니다."}
