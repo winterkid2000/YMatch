@@ -4,15 +4,10 @@
     <meta charset="UTF-8">
     <title>YontakMatch - 택시 요청</title>
     <style>
-        body {
-            font-family: sans-serif;
-            margin: 40px;
-        }
-        input, button {
-            margin: 5px 0;
-            padding: 8px;
-            font-size: 16px;
-        }
+        body { font-family: sans-serif; margin: 40px; }
+        input, button { margin: 5px 0; padding: 8px; font-size: 16px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { border: 1px solid #999; padding: 8px; text-align: center; }
         #responseModal {
             display: none;
             position: fixed;
@@ -35,32 +30,45 @@
     </style>
 </head>
 <body>
-    <h1>연택 택시 요청하기</h1>
+    <h1>🚖 연택 택시 요청 리스트</h1>
 
+    <h2>📋 현재 등록된 요청</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>닉네임</th>
+                <th>출발지</th>
+                <th>도착지</th>
+                <th>출발 시간</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ride in rides %}
+            <tr>
+                <td>{{ ride.nickname }}</td>
+                <td>{{ ride.departure }}</td>
+                <td>{{ ride.destination }}</td>
+                <td>{{ ride.departure_time.strftime('%Y-%m-%d %H:%M') }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="4">등록된 요청이 없습니다.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>✏️ 새로운 택시 요청 등록</h2>
     <form action="/submit" method="post">
         <label>닉네임:</label><br>
         <input type="text" name="nickname" required><br>
-
         <label>출발지:</label><br>
         <input type="text" name="departure" required><br>
-
         <label>도착지:</label><br>
         <input type="text" name="destination" required><br>
-
         <label>출발 시간:</label><br>
         <input type="datetime-local" name="departure_time" required><br>
-
         <button type="submit">요청 등록</button>
     </form>
 
-    <hr>
-    <h2>합승 제안 수락/거절 테스트</h2>
-    <p>예시로, 아래 버튼을 누르면 수락/거절 API를 호출하며 메시지를 모달로 보여줍니다.</p>
-
-    <button onclick="acceptProposal(1)">제안 수락 (예시 ID: 1)</button>
-    <button onclick="cancelProposal(1)">제안 거절 (예시 ID: 1)</button>
-
-    <!-- 모달 -->
     <div id="overlay"></div>
     <div id="responseModal">
         <p id="modalMessage"></p>
@@ -73,22 +81,9 @@
             document.getElementById('responseModal').style.display = 'block';
             document.getElementById('overlay').style.display = 'block';
         }
-
         function closeModal() {
             document.getElementById('responseModal').style.display = 'none';
             document.getElementById('overlay').style.display = 'none';
-        }
-
-        async function acceptProposal(id) {
-            const res = await fetch(`/api/match/${id}`, { method: 'PATCH' });
-            const data = await res.json();
-            showModal(data.message || "알 수 없는 응답");
-        }
-
-        async function cancelProposal(id) {
-            const res = await fetch(`/api/match/${id}`, { method: 'DELETE' });
-            const data = await res.json();
-            showModal(data.message || "알 수 없는 응답");
         }
     </script>
 </body>
