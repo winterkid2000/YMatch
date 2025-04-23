@@ -27,7 +27,7 @@ FastAPI 백엔드 + Jinja2 기반 HTML 프론트엔드로 제작된 MVP 버전�
 
 ---
 
-## 🛠 기술 스택
+## 기술 스택
 
 - **Backend:** FastAPI, SQLAlchemy, SQLite
 - **Frontend:** Jinja2, HTML
@@ -36,7 +36,7 @@ FastAPI 백엔드 + Jinja2 기반 HTML 프론트엔드로 제작된 MVP 버전�
 
 ---
 
-## 🚀 실행 방법
+## 실행 방법
 
 ### 1. 클론 및 이동
 ```bash
