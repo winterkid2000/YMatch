@@ -1,5 +1,6 @@
+# app/views/home.py
 from fastapi import APIRouter, Request, Depends
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from ..database import SessionLocal
@@ -32,3 +33,9 @@ def home(request: Request, db: Session = Depends(get_db), current_user: models.U
         "sent_matches": sent
     })
 
+# 로그아웃 라우터
+@router.get("/logout")
+def logout():
+    response = RedirectResponse(url="/login")
+    response.delete_cookie("access_token")  # 사용 중인 쿠키 이름에 따라 수정 필요
+    return response
