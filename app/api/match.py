@@ -41,8 +41,8 @@ def get_received_proposals(db: Session = Depends(get_db), current_user: models.U
 def get_sent_proposals(db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
     return db.query(models.MatchProposal).filter(models.MatchProposal.sender_id == current_user.id).all()
 
-# 제안 수락
-@router.patch("/match/{proposal_id}/accept")
+# 제안 수락 (POST 방식 허용)
+@router.post("/match/{proposal_id}/accept")
 def accept_proposal(proposal_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
     proposal = db.query(models.MatchProposal).filter(models.MatchProposal.id == proposal_id).first()
     if not proposal:
@@ -56,8 +56,8 @@ def accept_proposal(proposal_id: int, db: Session = Depends(get_db), current_use
     db.commit()
     return {"message": "제안을 수락했습니다."}
 
-# 제안 거절
-@router.patch("/match/{proposal_id}/reject")
+# 제안 거절 (POST 방식 허용)
+@router.post("/match/{proposal_id}/reject")
 def reject_proposal(proposal_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
     proposal = db.query(models.MatchProposal).filter(models.MatchProposal.id == proposal_id).first()
     if not proposal:
@@ -79,3 +79,4 @@ def cancel_proposal(proposal_id: int, db: Session = Depends(get_db), current_use
     proposal.status = "canceled"
     db.commit()
     return {"message": "제안을 취소했습니다."}
+
