@@ -1,1 +1,23 @@
+<!-- templates/register.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>회원가입 - 연택매치</title>
+</head>
+<body>
+    <h2>회원가입</h2>
+    <form method="post" action="/auth/register">
+        <label for="email">이메일 (@yonsei.ac.kr):</label><br>
+        <input type="email" id="email" name="email" required><br><br>
 
+        <label for="password">비밀번호:</label><br>
+        <input type="password" id="password" name="password" required><br><br>
+
+        <label for="nickname">닉네임:</label><br>
+        <input type="text" id="nickname" name="nickname" required><br><br>
+
+        <button type="submit">회원가입</button>
+    </form>
+    <p>이미 계정이 있으신가요? <a href="/login">로그인</a></p>
+</body>
+</html>
