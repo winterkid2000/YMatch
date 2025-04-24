@@ -1,13 +1,28 @@
+# app/main.py
 from fastapi import FastAPI
-from .database import Base, engine
+from fastapi.middleware.cors import CORSMiddleware
+from .auth import auth_router
 from .api import ride, match
-from .views import home 
+from .views import home  # home 라우터 추가
 
 app = FastAPI()
 
-Base.metadata.create_all(bind=engine)
+origins = [
+    "http://localhost",
+    "http://localhost:3000",
+    # 여기에 실제 프론트 배포 주소 추가 가능
+]
 
-app.include_router(ride.router, prefix="/api")
-app.include_router(match.router, prefix="/api")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-app.include_router(home.router)   
+# 라우터 등록 순서
+app.include_router(auth_router.router, prefix="/auth")
+app.include_router(ride.router)
+app.include_router(match.router)
+app.include_router(home.router)  # 루트 페이지 렌더링
