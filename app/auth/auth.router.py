@@ -5,6 +5,7 @@ from ..database import SessionLocal
 from .. import models, schemas
 from .security import hash_password, verify_password
 from .jwt_handler import create_access_token
+from .email_otp import generate_otp, send_otp_email, store_otp, verify_otp
 from pydantic import EmailStr
 
 router = APIRouter()
@@ -34,7 +35,7 @@ def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
         user_id=user_id,
         nickname=user.nickname,
         hashed_password=hashed_pw,
-        is_verified=False  # 추후 OTP 인증 연동
+        is_verified=False
     )
     db.add(new_user)
     db.commit()
@@ -52,5 +53,22 @@ def login_user(login_data: schemas.LoginRequest, db: Session = Depends(get_db)):
 
     token = create_access_token({"sub": user.user_id})
     return {"access_token": token, "token_type": "bearer"}
+
+# OTP 요청
+@router.post("/request-otp")
+def request_otp(email_data: schemas.EmailRequest, db: Session = Depends(get_db)):
+    code = generate_otp()
+    send_otp_email(email_data.email, code)
+    store_otp(db, email_data.email, code)
+    return {"message": "인증 코드가 이메일로 전송되었습니다."}
+
+# OTP 검증
+@router.post("/verify-otp")
+def verify_otp_code(email_data: schemas.EmailRequest, code: str, db: Session = Depends(get_db)):
+    success = verify_otp(db, email_data.email, code)
+    if not success:
+        raise HTTPException(status_code=400, detail="인증 코드가 잘못되었거나 만료되었습니다.")
+    return {"message": "이메일 인증이 완료되었습니다."}
+
 
 
