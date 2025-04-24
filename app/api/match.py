@@ -42,7 +42,7 @@ def get_sent_proposals(db: Session = Depends(get_db), current_user: models.User 
     return db.query(models.MatchProposal).filter(models.MatchProposal.sender_id == current_user.id).all()
 
 # 제안 수락
-@router.patch("/match/{proposal_id}")
+@router.patch("/match/{proposal_id}/accept")
 def accept_proposal(proposal_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
     proposal = db.query(models.MatchProposal).filter(models.MatchProposal.id == proposal_id).first()
     if not proposal:
@@ -56,6 +56,20 @@ def accept_proposal(proposal_id: int, db: Session = Depends(get_db), current_use
     db.commit()
     return {"message": "제안을 수락했습니다."}
 
+# 제안 거절
+@router.patch("/match/{proposal_id}/reject")
+def reject_proposal(proposal_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+    proposal = db.query(models.MatchProposal).filter(models.MatchProposal.id == proposal_id).first()
+    if not proposal:
+        raise HTTPException(status_code=404, detail="제안이 존재하지 않습니다.")
+    ride = db.query(models.RideRequest).filter(models.RideRequest.id == proposal.receiver_request_id).first()
+    if ride.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="거절 권한이 없습니다.")
+
+    proposal.status = "rejected"
+    db.commit()
+    return {"message": "제안을 거절했습니다."}
+
 # 제안 취소
 @router.delete("/match/{proposal_id}")
 def cancel_proposal(proposal_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
@@ -65,7 +79,3 @@ def cancel_proposal(proposal_id: int, db: Session = Depends(get_db), current_use
     proposal.status = "canceled"
     db.commit()
     return {"message": "제안을 취소했습니다."}
-
-    proposal.status = "canceled"
-    db.commit()
-    return {"message": "제안이 거절되었습니다."}
