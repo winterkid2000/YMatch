@@ -10,6 +10,8 @@ class User(Base):
     email = Column(String, unique=True, index=True)
     nickname = Column(String, unique=True, index=True)
     hashed_password = Column(String, nullable=False)
+    otp_code = Column(String, nullable=True)
+    otp_expiry = Column(DateTime, nullable=True)
     is_verified = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
