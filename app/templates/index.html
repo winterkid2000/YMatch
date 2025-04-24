@@ -24,33 +24,50 @@
     <hr>
 
     <h2>📋 전체 요청 목록</h2>
-    <!-- 여기에 서버에서 받아온 요청 리스트를 루프 돌며 표시 -->
     <div id="request-list">
-        <!-- 예시 -->
-        <!--
+        {% for ride in rides %}
         <div>
-            <strong>닉네임</strong> 님이 <em>출발지</em> → <em>도착지</em> (출발: 시간)
+            <strong>{{ ride.departure }} → {{ ride.destination }}</strong> (출발: {{ ride.departure_time }})
             <form method="post" action="/match">
-                <input type="hidden" name="receiver_request_id" value="요청 ID">
+                <input type="hidden" name="receiver_request_id" value="{{ ride.id }}">
                 <input type="text" name="proposed_place" placeholder="제안 장소" required>
                 <input type="text" name="proposed_time" placeholder="제안 시간" required>
                 <button type="submit">제안하기</button>
             </form>
         </div>
-        -->
+        {% endfor %}
     </div>
 
     <hr>
 
     <h2>📨 받은 제안</h2>
     <div id="received-matches">
-        <!-- 서버에서 가져온 /match/received 데이터 렌더링 -->
+        {% for proposal in received_matches %}
+        <div>
+            <p>🚗 <strong>{{ proposal.proposed_place }}</strong>에서 {{ proposal.proposed_time }} 에 제안 받음</p>
+            <form method="post" action="/match/{{ proposal.id }}/accept">
+                <button type="submit">수락</button>
+            </form>
+            <form method="post" action="/match/{{ proposal.id }}/reject">
+                <button type="submit">거절</button>
+            </form>
+        </div>
+        {% endfor %}
     </div>
 
     <h2>📤 보낸 제안</h2>
     <div id="sent-matches">
-        <!-- 서버에서 가져온 /match/sent 데이터 렌더링 -->
+        {% for proposal in sent_matches %}
+        <div>
+            <p>📨 {{ proposal.proposed_place }}에서 {{ proposal.proposed_time }}에 보냄 (상태: {{ proposal.status }})</p>
+        </div>
+        {% endfor %}
     </div>
+
+    <p><a href="/logout">로그아웃</a></p>
+</body>
+</html>
+
 
     <p><a href="/logout">로그아웃</a></p>
 </body>
