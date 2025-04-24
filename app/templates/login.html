@@ -1,1 +1,20 @@
+<!-- templates/login.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>로그인 - 연택매치</title>
+</head>
+<body>
+    <h2>로그인</h2>
+    <form method="post" action="/auth/login">
+        <label for="email">이메일:</label><br>
+        <input type="email" id="email" name="email" required><br><br>
 
+        <label for="password">비밀번호:</label><br>
+        <input type="password" id="password" name="password" required><br><br>
+
+        <button type="submit">로그인</button>
+    </form>
+    <p>계정이 없으신가요? <a href="/register">회원가입</a></p>
+</body>
+</html>
