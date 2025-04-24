@@ -1,90 +1,57 @@
+<!-- templates/index.html -->
 <!DOCTYPE html>
-<html lang="ko">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>YontakMatch - 택시 요청</title>
-    <style>
-        body { font-family: sans-serif; margin: 40px; }
-        input, button { margin: 5px 0; padding: 8px; font-size: 16px; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        th, td { border: 1px solid #999; padding: 8px; text-align: center; }
-        #responseModal {
-            display: none;
-            position: fixed;
-            top: 30%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            border: 2px solid #333;
-            padding: 20px;
-            z-index: 1000;
-        }
-        #overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.3);
-            z-index: 999;
-        }
-    </style>
+    <title>연택매치 홈</title>
 </head>
 <body>
-    <h1>🚖 연택 택시 요청 리스트</h1>
+    <h1>🚕 연택매치</h1>
 
-    <h2>📋 현재 등록된 요청</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>닉네임</th>
-                <th>출발지</th>
-                <th>도착지</th>
-                <th>출발 시간</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for ride in rides %}
-            <tr>
-                <td>{{ ride.nickname }}</td>
-                <td>{{ ride.departure }}</td>
-                <td>{{ ride.destination }}</td>
-                <td>{{ ride.departure_time.strftime('%Y-%m-%d %H:%M') }}</td>
-            </tr>
-            {% else %}
-            <tr><td colspan="4">등록된 요청이 없습니다.</td></tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <h2>📝 새 요청 등록</h2>
+    <form method="post" action="/ride">
+        <label for="departure">출발지:</label>
+        <input type="text" id="departure" name="departure" required><br><br>
 
-    <h2>✏️ 새로운 택시 요청 등록</h2>
-    <form action="/submit" method="post">
-        <label>닉네임:</label><br>
-        <input type="text" name="nickname" required><br>
-        <label>출발지:</label><br>
-        <input type="text" name="departure" required><br>
-        <label>도착지:</label><br>
-        <input type="text" name="destination" required><br>
-        <label>출발 시간:</label><br>
-        <input type="datetime-local" name="departure_time" required><br>
-        <button type="submit">요청 등록</button>
+        <label for="destination">도착지:</label>
+        <input type="text" id="destination" name="destination" required><br><br>
+
+        <label for="departure_time">출발 시간:</label>
+        <input type="datetime-local" id="departure_time" name="departure_time" required><br><br>
+
+        <button type="submit">등록</button>
     </form>
 
-    <div id="overlay"></div>
-    <div id="responseModal">
-        <p id="modalMessage"></p>
-        <button onclick="closeModal()">확인</button>
+    <hr>
+
+    <h2>📋 전체 요청 목록</h2>
+    <!-- 여기에 서버에서 받아온 요청 리스트를 루프 돌며 표시 -->
+    <div id="request-list">
+        <!-- 예시 -->
+        <!--
+        <div>
+            <strong>닉네임</strong> 님이 <em>출발지</em> → <em>도착지</em> (출발: 시간)
+            <form method="post" action="/match">
+                <input type="hidden" name="receiver_request_id" value="요청 ID">
+                <input type="text" name="proposed_place" placeholder="제안 장소" required>
+                <input type="text" name="proposed_time" placeholder="제안 시간" required>
+                <button type="submit">제안하기</button>
+            </form>
+        </div>
+        -->
     </div>
 
-    <script>
-        function showModal(message) {
-            document.getElementById('modalMessage').textContent = message;
-            document.getElementById('responseModal').style.display = 'block';
-            document.getElementById('overlay').style.display = 'block';
-        }
-        function closeModal() {
-            document.getElementById('responseModal').style.display = 'none';
-            document.getElementById('overlay').style.display = 'none';
-        }
-    </script>
+    <hr>
+
+    <h2>📨 받은 제안</h2>
+    <div id="received-matches">
+        <!-- 서버에서 가져온 /match/received 데이터 렌더링 -->
+    </div>
+
+    <h2>📤 보낸 제안</h2>
+    <div id="sent-matches">
+        <!-- 서버에서 가져온 /match/sent 데이터 렌더링 -->
+    </div>
+
+    <p><a href="/logout">로그아웃</a></p>
 </body>
 </html>
