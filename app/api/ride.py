@@ -42,6 +42,11 @@ def get_user_rides(
         models.RideRequest.user_id == current_user.id
     ).all()
 
+# 전체 요청 리스트 (제안용)
+@router.get("/rides", response_model=list[schemas.RideRequestOut])
+def get_all_rides(db: Session = Depends(get_db)):
+    return db.query(models.RideRequest).order_by(models.RideRequest.departure_time).all()
+
 # 요청 취소
 @router.delete("/ride/{ride_id}")
 def delete_ride(
@@ -61,6 +66,3 @@ def delete_ride(
     db.commit()
     return {"message": "요청이 취소되었습니다."}
 
-    ride.is_active = False
-    db.commit()
-    return {"message": "Ride request canceled and related match proposals updated."}
