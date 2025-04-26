@@ -1,3 +1,4 @@
+# app/auth/email_otp.py
 import random
 import smtplib
 from email.mime.text import MIMEText
