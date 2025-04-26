@@ -66,3 +66,4 @@ def delete_ride(
     db.commit()
     return {"message": "요청이 취소되었습니다."}
 
+
