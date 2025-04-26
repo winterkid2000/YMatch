@@ -39,3 +39,5 @@ def logout():
     response = RedirectResponse(url="/login")
     response.delete_cookie("access_token")  # 사용 중인 쿠키 이름에 따라 수정 필요
     return response
+
+
