@@ -66,3 +66,4 @@ class MatchProposalOut(BaseModel):
 
     class Config:
         orm_mode = True
+        
