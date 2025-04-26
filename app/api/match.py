@@ -80,3 +80,4 @@ def cancel_proposal(proposal_id: int, db: Session = Depends(get_db), current_use
     db.commit()
     return {"message": "제안을 취소했습니다."}
 
+
